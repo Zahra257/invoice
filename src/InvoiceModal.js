@@ -1,5 +1,4 @@
 
-import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -10,16 +9,17 @@ import { BiPaperPlane, BiCloudDownload } from "react-icons/bi";
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf'
 import pdfMake from "pdfmake";
-import {useEffect, useState} from 'react'
 import pdfFonts from 'pdfmake/build/vfs_fonts';
+import React, { useState, useEffect } from 'react';
+
 pdfMake.vfs = pdfFonts.pdfMake.vfs
 
 
 const InvoiceModal = (props)=>{
-
-  console.log(props.items)
+  console.log(props.facture?.date_dexpidition)
+  console.log(props)
+  console.log(props.facture?.id)
   let items =props.items
-  console.log(items)
 
   function buildTableBody(data, columns) {
     var body =[];
@@ -56,27 +56,7 @@ function table(data, columns) {
   const docDefinition = {
     pageMargins: [ 40, 40, 40, 150 ],
 
-    
-
-    
   
-                   
-
-       
-
-
-
-
-
-
-
-
-
-
-
-
-
-
  
     // content: [
     //   {text: `This is a header ${Math.random()*100}`, style: 'header'},
@@ -140,7 +120,7 @@ function table(data, columns) {
                                     {
                                       width: 100,
                                       fontSize: 10,
-                                      text: '\n 01/02/2023 \n 01020302103 \n\n',
+                                      text: `\n ${props.facture?.CreateAt} \n ${props.facture?.facture_id} \n\n`,
                                        style: 'header2'
                                       }
                                   ]
@@ -155,7 +135,7 @@ function table(data, columns) {
                                   {
                                     width: 100,
                                     fontSize: 10,
-                                    text: 'Mohammad adress n hm casa ',
+                                    text: `${props.facture?.name} - ${props.facture?.Rc} - ${props.facture?.adress} `,
                                      style: 'header3'
                                     }
                                 ]
@@ -179,7 +159,8 @@ function table(data, columns) {
                     body: [
                       [{ text: "N° BON DE COMMANDE", style: 'tableHeader' }, { text: "DATE D'EXPEDITION", style: 'tableHeader' },{ text: "MODE DE PAIEMENT", style: 'tableHeader' }],
 
-                        [{text: '5000', style: 'tableHeader'},{text: '4500', style: 'tableHeader'} ,{text: '4500', style: 'tableHeader'}],
+                        [{text: `${props.facture?.N_bon_de_commande}`, style: 'tableHeader'},{text: `${props.facture?.date_dexpidition
+                        }`, style: 'tableHeader'} ,{text: `${props.facture?.mode_de_payement}`, style: 'tableHeader'}],
 
                     ]
 
@@ -277,9 +258,9 @@ function table(data, columns) {
     },
   };
 
+
   const createPdf = () => {
     const pdfGenerator = pdfMake.createPdf(docDefinition);
-    console.log(pdfGenerator)
 
     pdfGenerator.download()
   }

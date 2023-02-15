@@ -6,13 +6,13 @@ import { BiTrash } from "react-icons/bi";
 import EditableField from './EditableField';
 
 class InvoiceItem extends React.Component {
-  render() {
-    console.log(this.props.items)
+  render() {    console.log(this.props.items)
 
+             console.log(this.props.onRowAdd)                                                                                                                 
     var onItemizedItemEdit = this.props.onItemizedItemEdit;
     var rowDel = this.props.onRowDel;
     var itemTable = this.props.items.map(function(item) {
-     
+
       return (
         <ItemRow onItemizedItemEdit={onItemizedItemEdit} item={item} onDelEvent={rowDel.bind(this)} key={item.id} />
       )
@@ -44,6 +44,7 @@ class ItemRow extends React.Component {
     this.props.onDelEvent(this.props.item);
   }
   render() {
+
     return (
       <tr>
         <td style={{width: '100%'}}>
@@ -79,7 +80,7 @@ class ItemRow extends React.Component {
           }}/>
         </td>
         <td style={{minWidth: '130px'}}>
-          <EditableField
+        <EditableField
             onItemizedItemEdit={this.props.onItemizedItemEdit}
             cellData={{
             type: "number",
