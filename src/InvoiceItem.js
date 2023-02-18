@@ -4,19 +4,17 @@ import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
 import { BiTrash } from "react-icons/bi";
 import EditableField from './EditableField';
+import Form from 'react-bootstrap/Form';
 
 class InvoiceItem extends React.Component {
-  render() {    console.log(this.props.items)
-
-             console.log(this.props.onRowAdd)                                                                                                                 
+  render() {    
+console.log('invie',this.props.items)
     var onItemizedItemEdit = this.props.onItemizedItemEdit;
     var rowDel = this.props.onRowDel;
-    var itemTable = this.props.items.map(function(item) {
-
-      return (
-        <ItemRow onItemizedItemEdit={onItemizedItemEdit} item={item} onDelEvent={rowDel.bind(this)} key={item.id} />
-      )
-    });
+    var items = this.props.items;
+    var product = this.props.product;
+    var set =this.props.set
+  
     return (
       <div>
         <Table>
@@ -29,10 +27,11 @@ class InvoiceItem extends React.Component {
             </tr>
           </thead>
           <tbody>
-            {itemTable}
+
+          <ItemRow onItemizedItemEdit={onItemizedItemEdit} item={items} onDelEvent={rowDel.bind(this)}  product={product} set={set.bind(this)}/>
           </tbody>
         </Table>
-        <Button className="fw-bold" onClick={this.props.onRowAdd}>Ajouter Produit</Button>
+        <Button className="fw-bold" onClick={this.props.addProduct}>Ajouter Produit</Button>
       </div>
     );
 
@@ -44,10 +43,18 @@ class ItemRow extends React.Component {
     this.props.onDelEvent(this.props.item);
   }
   render() {
+    console.log('invie2',this.props.item)
 
     return (
       <tr>
         <td style={{width: '100%'}}>
+        <Form.Select  className="btn btn-light my-1" aria-label="products" > 
+          <option>Produits</option>
+          {`${this.props.product}` &&  <>  {this.props.product?.map((option )=>
+              <>
+                <option value={option.ID} >{option.name}-{option.ID} </option>
+          </>)  }</>} 
+             </Form.Select> 
           <EditableField
             onItemizedItemEdit={this.props.onItemizedItemEdit}
             cellData={{
@@ -55,7 +62,7 @@ class ItemRow extends React.Component {
             name: "name",
             placeholder: "Item name",
             value: this.props.item.name,
-            id: this.props.item.id,
+            // id: this.props.item.id,
           }}/>
           <EditableField
             onItemizedItemEdit={this.props.onItemizedItemEdit}
@@ -64,8 +71,16 @@ class ItemRow extends React.Component {
             name: "DESCRIPTION",
             placeholder: "Item description",
             value: this.props.item.DESCRIPTION,
-            id: this.props.item.id
+            // id: this.props.item.id
           }}/>
+         
+               
+    
+
+            
+
+
+
         </td>
         <td style={{minWidth: '70px'}}>
           <EditableField
@@ -76,7 +91,7 @@ class ItemRow extends React.Component {
             min: 1,
             step: "1",
             value: this.props.item.QUANTITE,
-            id: this.props.item.id,
+            // id: this.props.item.id,
           }}/>
         </td>
         <td style={{minWidth: '130px'}}>
@@ -90,7 +105,7 @@ class ItemRow extends React.Component {
             presicion: 2,
             textAlign: "text-end",
             value: this.props.item.P_U,
-            id: this.props.item.id,
+            // id: this.props.item.id,
           }}/>
         </td>
         <td className="text-center" style={{minWidth: '50px'}}>

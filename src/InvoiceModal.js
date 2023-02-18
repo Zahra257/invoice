@@ -19,7 +19,7 @@ const InvoiceModal = (props)=>{
   console.log(props.facture?.date_dexpidition)
   console.log(props)
   console.log(props.facture?.id)
-  let items =props.items
+  let items =[{REFERENCE :'kjkj', DESCRIPTION:'kjbkjb',QUANTITE:'jnln',P_U:'jn',MONTANT:'bhkkjhb'}]
 
   function buildTableBody(data, columns) {
     var body =[];

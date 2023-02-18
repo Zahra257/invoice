@@ -23,11 +23,11 @@ class InvoiceForm extends React.Component {
       taxRate: '',
       taxAmmount: '0.00',
     };
-    this.state.items = [
+    this.state.items = 
     
       {
         REFERENCE : '',
-        id: 0,
+        ID: '',
         name: '',
         DESCRIPTION: '',
         P_U: '1.00',
@@ -35,7 +35,7 @@ class InvoiceForm extends React.Component {
         MONTANT :'0.00'
       },
      
-    ];
+    
 
 
     this.editField = this.editField.bind(this);
@@ -44,7 +44,7 @@ class InvoiceForm extends React.Component {
      this.state.List = []
      this.state.error = '';
     this.state.client ={
-      id :'',
+     id :'',
      name : '',
      Rc:'',
      adress:''
@@ -58,6 +58,9 @@ class InvoiceForm extends React.Component {
 
     this.state.msg = '',
     this.state.Errorhandelar =''
+    this.state.Productlist = [],
+    this.state.ERROR = ''
+
   }
   
   getData(){
@@ -76,73 +79,77 @@ class InvoiceForm extends React.Component {
       })
 
     }
+  getProduct(){
+    Axios.get(`http://localhost:7000/ProductList`)
+      .then(response => {
+                 console.log(response.data.List)
+
+         this.setState({ERROR:''})
+         this.setState({Productlist:response.data.List})
+      }
+      )
+
+      .catch(error => {
+        {
+           this.setState({Productlist:''})
+           this.setState({ERROR :error.response.data.message})
+        }
+      })
+
+    }
 
   componentDidMount(prevProps) {
-    this.handleCalculateTotal();
+    // this.handleCalculateTotal();
       this.getData();
-
+      this.getProduct()
   }
   handleRowDel(items) {
     var index = this.state.items.indexOf(items);
     this.state.items.splice(index, 1);
     this.setState(this.state.items);
   };
-  handleAddEvent(evt) {
-    var id = (+ new Date() + Math.floor(Math.random() * 999999)).toString(36);
-    var items = {
-      REFERENCE : '',
-      id: id,
-      name: '',
-      DESCRIPTION: '',
-      P_U: '1.00',
-      QUANTITE: 1,
-      MONTANT: '0.00',
-    }
-    this.state.items.push(items);
-    this.setState(this.state.items);
-  }
-  handleCalculateTotal() {
-    var items = this.state.items;
-    var MONTANT = 0;
-    // items.map(function(items) {
-    //   MONTANT = parseFloat(MONTANT + (parseFloat(items.PRIX_UNITAIRE).toFixed(2) * parseInt(items.QUANTITE))).toFixed(2)
-    // });
-   let x = items.map((p) => p.P_U*p.QUANTITE);
-   MONTANT =  x.reduce((acc, curr) => acc + curr, 0)
-    this.setState({
-      MONTANT: parseFloat(MONTANT).toFixed(2)  }, () => {
   
-      this.setState({
-        taxAmmount: parseFloat(parseFloat(MONTANT) * (this.state.taxRate / 100)).toFixed(2)
-      }, () => {
+   select (evt){
+    var value =evt.target.value 
+    this.setState({ID : value})
+   }
+
+  // handleCalculateTotal() {
+  //   var items = this.state.items;
+  //   var MONTANT = 0;
+  //   // items.map(function(items) {
+  //   //   MONTANT = parseFloat(MONTANT + (parseFloat(items.PRIX_UNITAIRE).toFixed(2) * parseInt(items.QUANTITE))).toFixed(2)
+  //   // });
+  //  let x = items.map((p) => p.P_U*p.QUANTITE);
+  //  MONTANT =  x.reduce((acc, curr) => acc + curr, 0)
+  //   this.setState({
+  //     MONTANT: parseFloat(MONTANT).toFixed(2)  }, () => {
+  
+  //     this.setState({
+  //       taxAmmount: parseFloat(parseFloat(MONTANT) * (this.state.taxRate / 100)).toFixed(2)
+  //     }, () => {
        
-          this.setState({
-            total: (MONTANT  + parseFloat(this.state.taxAmmount))
-          });
-        });
-      });
+  //         this.setState({
+  //           total: (MONTANT  + parseFloat(this.state.taxAmmount))
+  //         });
+  //       });
+  //     });
 
 
-  };
+  // };
+ 
   onItemizedItemEdit(evt) {
-    var item = {
-      id: evt.target.id,
-      name: evt.target.name,
-      value: evt.target.value
-    };
-    var items = this.state.items.slice();
-    var newItems = items.map(function(items) {        
+  
+ var a = evt.target.name;
+ var b = evt.target.value
+    // this.setState( ...this.state.items , [evt.target.value] );
+      
+    // this.handleCalculateTotal();
+  
+  console.log('items', ...this.state.items , )
+};
+  
 
-      for (var key in items) {
-        if (key == item.name && items.id == item.id) {
-          items[key] = item.value;
-        }
-      }
-      return items;
-    })
-    this.setState({items: newItems});
-    this.handleCalculateTotal();
-  };
   editField = (event) => {
     this.setState({
       [event.target.name]: event.target.value
@@ -160,6 +167,7 @@ class InvoiceForm extends React.Component {
 
 edit = (e)=>{
   localStorage.removeItem("factureget");
+  window.location.reload();
 
 }
 
@@ -187,13 +195,28 @@ edit = (e)=>{
       }
     })
   }
+  addproduct = (e)=>{
+    Axios.post(`http://localhost:7000/AddProduct`)
+    .then(response => {
+       this.setState({error:''})
+       this.setState({List:response.data.List})
+    }
+    )
 
+    .catch(error => {
+      {
+         this.setState({List:''})
+         this.setState({error :error.response.data.message})
+      }
+    })
+
+  }
   
 
   render() {  
   let facturelocalstorage = localStorage.getItem('factureget');
   let factureobject = JSON.parse(facturelocalstorage)
-console.log(this.state.msg)
+console.log('cc' ,this.state.items)
 
     return (<Form onSubmit={this.openModal}>
       <Row>
@@ -219,8 +242,7 @@ console.log(this.state.msg)
                 
                 <Form.Control placeholder={"N° Bon de Commande"} value={this.state.N_bon_de_commande} type="text" name="N_bon_de_commande" className="my-2" autoComplete="address" onChange={(e) => this.setState({N_bon_de_commande :e.target.value})} required="required"/>
               </Col>
-              <Col>
-                
+              <Col>               
                 <Form.Control placeholder={"Mode de paiement"} value={this.state.mode_de_payement} type="text" name="mode_de_payement" className="my-2" autoComplete="address" onChange={(e) => this.setState({mode_de_payement :e.target.value})} required="required"/>
               </Col> 
             </Row>
@@ -251,8 +273,9 @@ console.log(this.state.msg)
             </Row>             
              {/* <input value={this.state.client.Rc} onChange={(e)=> console.log('t',e.target.value)}/> */}
 
-            <InvoiceItem  onItemizedItemEdit={this.onItemizedItemEdit.bind(this)} onRowAdd={this.handleAddEvent.bind(this)} onRowDel={this.handleRowDel.bind(this)} items={this.state.items}/>
-            <Row className="mt-4 justify-content-end">
+            <InvoiceItem set={this.select.bind(this)} product={this.state.Productlist} onItemizedItemEdit={this.onItemizedItemEdit.bind(this)} onRowDel={this.handleRowDel.bind(this)} items={this.state.items}/>
+            
+            {/* <Row className="mt-4 justify-content-end">
               <Col lg={6}>
                 <div className="d-flex flex-row align-items-start justify-content-between">
                   <span className="fw-bold">SOUS-TOTAL:
@@ -278,7 +301,7 @@ console.log(this.state.msg)
                     {this.state.total || 0}</span>
                 </div>
               </Col>
-            </Row>
+            </Row> */}
             <hr className="my-4"/>
             <Form.Label className="fw-bold">Remarque:</Form.Label>
             <Form.Control placeholder="Thanks for your business!" name="notes" value={this.state.notes} onChange={(event) => this.editField(event)} as="textarea" className="my-2" rows={1}/>
